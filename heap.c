@@ -92,10 +92,10 @@ int main() {
 	
 	int size;
 	
-	printf("\nEnter number of values:\n");
+	printf("\nEnter number of values: \n");
 	scanf("%d", &size);
 	
-	printf("\nFilling array with:\n");
+	printf("\nFilling array with: \n");
 	
 	for (int i = 1; i < size + 1; i++) {
 		int j = i * 2;
@@ -108,14 +108,14 @@ int main() {
 	for (int i = 1; i < size + 1; i++)
 		printf("%d ", set->array[i]);
 	
-	printf("\n\nPopped out values:\n");
+	printf("\n\nPopped out values: \n");
 	
 	for (int i = 1; i < (size - size / 2); i++) {
 		int j = pop(set);
 		printf("%d ", j);
 	}
 		
-	printf("\n\nRemaining array:\n"); 
+	printf("\n\nRemaining array: \n"); 
 	
 	for (int i = 1; i < (size + 2 - (size - size / 2)); i++)
 		printf("%d ", set->array[i]);
