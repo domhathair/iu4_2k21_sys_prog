@@ -1,92 +1,127 @@
 #include "stdio.h"
+#include "stdlib.h"
 #include "limits.h"
 
-int heap[512] = {0};
-int size;
+struct heap {
+	int array[512];
+	int size;
+};
 
-void create() {
+struct heap *create() {
 	
-	heap[0] = INT_MIN;
-	size = 0;
-
+	struct heap *hp = (struct heap*)malloc(sizeof(struct heap));
+	
+	hp->size = 0;
+	hp->array[0] = INT_MAX;
+	
+	return hp;
+	
 }
 
-void push(int value) {
+void heal(struct heap *hp, int pos) {
 	
-	size++;
-	int pos = size;
+	int lch = pos * 2;
+	int rch = (pos * 2) + 1;
+	int par = pos;
 	
-	heap[pos] = value;
+	int temp;
 	
-	while ((heap[pos / 2] < value) && (pos / 2) > 0) {
+	if ((lch <= hp->size) && (hp->array[lch] > hp->array[par]))
+		par = lch;
 		
-		heap[pos] = heap[pos / 2];
-		heap[pos / 2] = value;
-		pos /= 2;
+	if ((rch <= hp->size) && (hp->array[rch] > hp->array[par]))
+		par = rch;
 		
-        }
-}
-
-int pop() {
-	
-	int max = heap[1];
-	int child;
-	int value;
-	int pos = 1;
-	
-	printf("size: %d\n", size);
-	
-	heap[pos] = heap[size - 1];
-	heap[size - 1] = 0;
-	
-	child = pos * 2;
-	
-	while (heap[child] > heap[pos]) {
-		
-		value = heap[pos];
-		heap[pos] = heap[child];
-		heap[child] = value;
-		
-		pos *= 2;
-		child = pos * 2;
-		
+	if (par != pos) {
+		temp = hp->array[pos];
+		hp->array[pos] = hp->array[par];
+		hp->array[par] = temp;
+		heal(hp, par);
 	}
 	
-	size--;
+	return;
+	
+}
+
+void push(struct heap *hp, int val) {
+	
+	int temp;
+	int size;
+	
+	hp->size++;
+	size = hp->size;
+	
+	//printf("hp->size: %d\n", hp->size);
+	hp->array[size] = val;
+	
+	while ((size > 1) && (hp->array[size / 2] < hp->array[size])) {
+		temp = hp->array[size / 2];
+		hp->array[size / 2] = hp->array[size];
+		hp->array[size] = temp;
+		size /= 2;
+	}
+	
+	return;
+	
 }
 		
-
+int pop(struct heap *hp) {
+	
+	int max;
+	
+	if (hp->size == 0)
+		printf("Heap is empty!\n");
+		
+	max = hp->array[1];
+	hp->array[1] = hp->array[hp->size];
+	
+	hp->size--;
+	//printf("hp->size: %d\n", hp->size);
+	
+	heal(hp, 1);
+	
+	hp->array[hp->size + 1] = 0;
+	
+	return max;
+	
+}
+	
 int main() {
 	
-	create();
-	push(1);
-	push(2);
-	push(4);
-	push(5);
-	push(6);
-	push(8);
-	push(9);
-	push(10);
-	push(11);
-	push(16);
+	struct heap *set = create();
 	
-	int i = 1;
-	while (i < 16) {
-		printf("%d ", heap[i]);
-		i++;
+	int size;
+	
+	printf("\nEnter number of values:\n");
+	scanf("%d", &size);
+	
+	printf("\nFilling array with:\n");
+	
+	for (int i = 1; i < size + 1; i++) {
+		int j = i * 2;
+		push(set, j);
+		printf("%d ", j); 
 	}
 	
+	printf("\n\nFilled array:\n");	
+	
+	for (int i = 1; i < size + 1; i++)
+		printf("%d ", set->array[i]);
+	
+	printf("\n\nPopped out values:\n");
+	
+	for (int i = 1; i < (size - size / 2); i++) {
+		int j = pop(set);
+		printf("%d ", j);
+	}
+		
+	printf("\n\nRemaining array:\n"); 
+	
+	for (int i = 1; i < (size + 2 - (size - size / 2)); i++)
+		printf("%d ", set->array[i]);
+
 	printf("\n");
 	
-	pop();
-	pop();
-	pop();
-	pop();
-	
-	i = 1;
-	while (i < 16) {
-		printf("%d ", heap[i]);
-		i++;
-	}
+	return 0;
 		
 }
