@@ -1,0 +1,5 @@
+Type:
+
+sudo strace shello
+
+and see what you got.
